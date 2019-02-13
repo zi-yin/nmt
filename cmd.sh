@@ -1,3 +1,4 @@
+# change seq2seq to actual model name (e.g. model_consolidated_qa_qd)
 docker run --name serving -p 8501:8501 --mount type=bind,source=/Users/zyin/Desktop/server/zi/nmt/models/model_qa_superuser.com,target=/models/seq2seq -e MODEL_NAME=seq2seq -t tensorflow/serving
 # for serving the generative model
 curl -d '{"inputs": ["is it possible to use an ssd as a large capacity flash drive i know that some computer cases include external sata ports so would it be reasonable to assume that one could interface with the ssd using a sata cable"]}' -X POST http://localhost:8501/v1/models/seq2seq:predict -s -w 'Total: %{time_total}\n'

@@ -2,7 +2,7 @@
 docker run -d --name serving_base zi/tensorflow-serving:latest
 # alternatively, can use the default serving image
 # docker run -d --name serving_base tensorflow/serving
-docker cp cp serving_models/model_consolidated_qa_qd serving_base:/models/model_consolidated_qa_qd
+docker cp serving_models/model_consolidated_qa_qd serving_base:/models/model_consolidated_qa_qd
 # id 7960533f2a25 is the container for serving_base
 docker commit --change "ENV MODEL_NAME model_consolidated_qa_qd" serving_base 7960533f2a25
 docker kill serving_base

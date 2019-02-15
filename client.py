@@ -10,9 +10,9 @@ REQUEST_SCORE = '{"inputs": {"seq_input_src": ["%s"], "seq_input_tgt": ["%s"]}}'
 EOS = "</s>"
 
 class Client:
-    def __init__(self, host):
+    def __init__(self, host, name):
         self.HOST = host
-        self.URL = "http://{}/v1/models/seq2seq:predict".format(self.HOST)
+        self.URL = "http://{}/v1/models/{}:predict".format(self.HOST, name)
     
     def _decode_single(self, response):
         try:
@@ -106,16 +106,17 @@ def submit_discriminative(client):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model", type=str, required=True)
-    parser.add_argument("--host", type=str, default="archimedes.elca.mw.int:8501")
+    parser.add_argument("--model_type", type=str, required=True)
+    parser.add_argument("--model_name", type=str, default="model_consolidated_qa_qd")
+    parser.add_argument("--host", type=str, default="archimedes.elca.mw.int:10501")
     args = parser.parse_args()
 
 
-    client = Client(args.host)
+    client = Client(args.host, args.model_name)
 
-    if args.model == "generative":
+    if args.model_type == "generative":
         submit_generative(client)
-    elif args.model == "discriminative":
+    elif args.model_type == "discriminative":
         submit_discriminative(client)
     else:
         raise NotImplementedError('Only supports "generative" or "discriminative" models')

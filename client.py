@@ -108,7 +108,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--model_type", type=str, required=True)
     parser.add_argument("--model_name", type=str, default="model_consolidated_qa_qd")
-    parser.add_argument("--host", type=str, default="archimedes.elca.mw.int:10501")
+    parser.add_argument("--host", type=str, default="localhost:10501")
     args = parser.parse_args()
 
 

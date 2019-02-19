@@ -77,14 +77,14 @@ Run the docker image like the following:
 `docker run --name $service_name -p $port:8501 --mount type=bind,source=$pwd/$model_dir_out,target=/models/model_$source -e MODEL_NAME=model_$source -t tensorflow/serving`
 
 ## Test the Service
-For testing if the generative model is successfully brought up, run
+For testing if the generative model is successfully brought up and end-to-end latency, run
 
-`curl -d '{"inputs": ["is it possible to use an ssd as a large capacity flash drive i know that some computer cases include external sata ports so would it be reasonable to assume that one could interface with the ssd using a sata cable"]}' -X POST http://localhost:8501/v1/models/seq2seq:predict -s -w 'Total: %{time_total}\n'
+`curl -d '{"inputs": ["is it possible to use an ssd as a large capacity flash drive i know that some computer cases include external sata ports so would it be reasonable to assume that one could interface with the ssd using a sata cable"]}' -X POST http://localhost:$port/v1/models/model_$source:predict -s -w 'Total: %{time_total}\n'
 `
 
-For testing if the discriminative model is up and client side batching works, run
+For testing if the discriminative model is up, end-to-end latency, and client side batching works, run
 
-`curl -d '{"inputs": {"seq_input_src": ["", "faq for autodesk wireless radius certificate does the radius certificate affect the autodesk guest wi fi", "how do i connect to the wifi", "faq for passwords what is the username and password for UNK network", "faq for autodesk wireless radius certificate what is the wi fi radius certificate", "faq for autodesk wireless radius certificate does the radius certificate expire", "faq for autodesk wireless radius certificate how does the certificate expiration affect macos devices", "how to get connected with autodesk wifi", "faq for autodesk wireless radius certificate how does the certificate expiration affect windows os devices", "faq for microsoft teams can i add guest members to teams", "how to connect to autodesk wireless android"], "seq_input_tgt": ["what is the guest wifi password", "what is the guest wifi password", "what is the guest wifi password", "what is the guest wifi password", "what is the guest wifi password", "what is the guest wifi password", "what is the guest wifi password", "what is the guest wifi password", "what is the guest wifi password", "what is the guest wifi password", "what is the guest wifi password"]}}' -X POST http://archimedes.elca.mw.int:8501/v1/models/seq2seq:predict -s -w 'Total: %{time_total}\n'`
+`curl -d '{"inputs": {"seq_input_src": ["", "is it possible to use an ssd as a large capacity flash drive i know that some computer cases include external sata ports so would it be reasonable to assume that one could interface with the ssd using a sata cable", "plug in the power cable to prevent your laptop from turning off automatically"], "seq_input_tgt": ["using ssd as external storage", "using ssd as external storage", "using ssd as external storage"]}}' -X POST http://localhost:$port/v1/models/model_$source:predict -s -w 'Total: %{time_total}\n'`
 
 
 # Introduction

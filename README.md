@@ -9,6 +9,12 @@ For using the stable TensorFlow versions, please consider other branches such as
 *If make use of this codebase for your research, please cite
 [this](#bibtex).*
 
+- [Serving](#serving)
+   - [Generative Model](#generative-model)
+   - [Discriminative Model](#discriminative-model)
+   - [Export Servables](#export-servables)
+   - [Test the Service](#test-the-service)
+   - [Bringing Up the Service](#bringing-up-the-service)
 - [Introduction](#introduction)
 - [Basic](#basic)
    - [Background on Neural Machine Translation](#background-on-neural-machine-translation)
@@ -42,6 +48,43 @@ For using the stable TensorFlow versions, please consider other branches such as
 - [Acknowledgment](#acknowledgment)
 - [References](#references)
 - [BibTex](#bibtex)
+
+# Serving
+Additional serving-related code was added on top of the original script
+for training and validation. Refer to [tensorflow serving documents](https://www.tensorflow.org/serving/docker) for more
+details about serving tf models using tf serving framework.
+
+There are two models that can be exported for serving: a generative model and a discriminative (scoring) model.
+
+## Generative Model
+The generative model is capable of generating target sequences using beam search. The model outputs the next token using
+max likelihood until it hits the <eos> token. This mode can be used for machine translation, text summarization of query generation.
+
+## Discriminative Model
+The discriminative model takes a pair of (src, tgt) sequence and evaluate the log likelihood, i.e. log(P(tgt|src)). This can be a
+useful indicator of the relatedness between the two sequences (with proper adjustment, for example, subtract log(P(tgt|dummy src))).
+
+I also implemented the method to support client-side batching: the client can send multiple (src, tgt) pairs to the server, where
+the server returns a list of scores for every pair in the batch.
+
+## Export Servable
+We serve the model using docker containers. A sample shell script can be found in `export_model_for_serving.sh`
+For instructions on building docker image with models packed in, see `build_docker_image.sh`
+
+## Bringing Up the Service
+Run the docker image like the following:
+
+`docker run --name $service_name -p $port:8501 --mount type=bind,source=$pwd/$model_dir_out,target=/models/model_$source -e MODEL_NAME=model_$source -t tensorflow/serving`
+
+## Test the Service
+For testing if the generative model is successfully brought up, run
+
+`curl -d '{"inputs": ["is it possible to use an ssd as a large capacity flash drive i know that some computer cases include external sata ports so would it be reasonable to assume that one could interface with the ssd using a sata cable"]}' -X POST http://localhost:8501/v1/models/seq2seq:predict -s -w 'Total: %{time_total}\n'
+`
+
+For testing if the discriminative model is up and client side batching works, run
+
+`curl -d '{"inputs": {"seq_input_src": ["", "faq for autodesk wireless radius certificate does the radius certificate affect the autodesk guest wi fi", "how do i connect to the wifi", "faq for passwords what is the username and password for UNK network", "faq for autodesk wireless radius certificate what is the wi fi radius certificate", "faq for autodesk wireless radius certificate does the radius certificate expire", "faq for autodesk wireless radius certificate how does the certificate expiration affect macos devices", "how to get connected with autodesk wifi", "faq for autodesk wireless radius certificate how does the certificate expiration affect windows os devices", "faq for microsoft teams can i add guest members to teams", "how to connect to autodesk wireless android"], "seq_input_tgt": ["what is the guest wifi password", "what is the guest wifi password", "what is the guest wifi password", "what is the guest wifi password", "what is the guest wifi password", "what is the guest wifi password", "what is the guest wifi password", "what is the guest wifi password", "what is the guest wifi password", "what is the guest wifi password", "what is the guest wifi password"]}}' -X POST http://archimedes.elca.mw.int:8501/v1/models/seq2seq:predict -s -w 'Total: %{time_total}\n'`
 
 
 # Introduction

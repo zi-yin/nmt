@@ -16,16 +16,12 @@ class Exporter(object):
   """
 
   def __init__(self, hparams, flags):
-    """Construct exporter.
-    By default, the hparams can be loaded from the `hparams` file
-    which saved in out_dir if you enable save_hparams. So if you want to
-    export the model, you just add arguments that needed for exporting.
-    Arguments are specified in ``nmt.py`` module.
-    Go and check that in ``add_export_arugments()`` function.
-    Args:
-     hparams: Hyperparameter configurations.
-     flags: extra flags used for exporting model.
     """
+    export trained model to a tf servable so
+    that the tf serving binary can load and serve it
+    i expanded this from a github post
+    """
+
     self.hparams = hparams
     self._model_dir = self.hparams.out_dir
     v = flags.version_number
